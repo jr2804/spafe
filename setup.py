@@ -1,14 +1,18 @@
 # -*- coding: utf-8 -*-
 import pathlib
-from setuptools import setup, find_packages
+from setuptools import setup, find_packages, Extension
+from Cython.Build import cythonize
+from Cython.Distutils import build_ext
 
 # The directory containing this file
 path = pathlib.Path(__file__).parent
 
 # get readme text
 readme = (path / "README.md").read_text()
+
 # define requirements
 requires = ["numpy>=1.17.2", "scipy>=1.3.1"]
+
 
 setup (
         name         = 'spafe',
@@ -35,4 +39,8 @@ setup (
         platforms            = 'any',
         include_package_data = True,
         install_requires     = requires,
-     )
+
+        ext_modules = cythonize(["spafe/cutils/cythonfuncs.pyx"],
+                                 annotate=True,
+                                 language_level=3)
+)
