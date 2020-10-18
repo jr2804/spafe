@@ -2,13 +2,18 @@ import numpy as np
 cimport numpy as np
 
 
+# define numpy type
 FTYPE = np.float
+
+# Slaney's ERB Filter constants
+cdef float EarQ = 9.26449
+cdef float minBW = 24.7
 
 
 """
 Coverters
 """
-cpdef float chz2mel(float hz, int htk):
+cpdef float cyhz2mel(float hz, int htk):
     """
     Convert a value in Hertz to Mels
     """
@@ -26,7 +31,7 @@ cpdef float chz2mel(float hz, int htk):
     return res
 
 
-cpdef float chz2bark(float f):
+cpdef float cyhz2bark(float f):
     """
     Convert Hz frequencies to Bark acording to Wang, Sekey & Gersho, 1992.
     """
@@ -35,18 +40,20 @@ cpdef float chz2bark(float f):
     return res
 
 
-cpdef float cfft2bark(int fft, int fs, int nfft):
+cpdef float cyfft2bark(int fft, int fs, int nfft):
     """
     Convert Bark frequencies to Hz.
     """
     cdef float res
     cdef float input
     input = (fft * fs) / (nfft + 1)
-    res = chz2bark(input)
+    res = cyhz2bark(input)
     return res
 
 
-cpdef np.ndarray[FTYPE_t, ndim=2] cfft2barkmx(float min_bark, float nyqbark, int nfft, int fs, int nfilts, int bwidth):
+cpdef np.ndarray[FTYPE_t, ndim=2] cyfft2barkmx(float min_bark, float nyqbark,
+                                               int nfft, int fs,int nfilts,
+                                               int bwidth):
     """
     Generate a matrix of weights to combine FFT bins into Bark bins.
     """
@@ -54,7 +61,7 @@ cpdef np.ndarray[FTYPE_t, ndim=2] cfft2barkmx(float min_bark, float nyqbark, int
     wts = np.zeros((nfilts, nfft), dtype=FTYPE)
 
     cdef float step_barks = nyqbark / (nfilts - 1)
-    cdef float binbarks = chz2bark((fs / nfft) * np.arange(0, nfft / 2 + 1))
+    cdef float binbarks = cyhz2bark((fs / nfft) * np.arange(0, nfft / 2 + 1))
 
     cdef int i
     cdef float f_bark_mid
@@ -72,7 +79,7 @@ cpdef np.ndarray[FTYPE_t, ndim=2] cfft2barkmx(float min_bark, float nyqbark, int
 """
 Bark fbanks
 """
-cpdef float cFm(float fb, float fc):
+cpdef float cyFm(float fb, float fc):
     """
     Compute a Bark filter around a certain center frequency in bark.
     """
@@ -88,7 +95,10 @@ cpdef float cFm(float fb, float fc):
     return res
 
 
-cpdef np.ndarray[FTYPE_t, ndim=2] bark_helper(str scale, int nfilts, int nfft, np.ndarray[double, ndim=1] bins, np.ndarray[double, ndim=1] bark_points):
+cpdef np.ndarray[FTYPE_t, ndim=2] cybark_helper(str scale, int nfilts,
+                                                int nfft,
+                                                np.ndarray[double, ndim=1] bins,
+                                                np.ndarray[double, ndim=1] bark_points):
     """
     Compute fbank helper.
     """
@@ -96,8 +106,8 @@ cpdef np.ndarray[FTYPE_t, ndim=2] bark_helper(str scale, int nfilts, int nfft, n
     fbank = np.zeros((nfilts, nfft // 2 + 1), dtype=FTYPE)
 
 
-    cdef float c
     # init scaler
+    cdef float c
     if scale == "descendant" or scale == "constant":
         c = 1
     else:
@@ -121,8 +131,8 @@ cpdef np.ndarray[FTYPE_t, ndim=2] bark_helper(str scale, int nfilts, int nfft, n
 
         for i in range(int(bins[j - 2]), int(bins[j + 2])):
             fc = bark_points[j]
-            fb = cfft2bark(i, nfilts, nfft)
-            ffbfc = cFm(fb, fc)
+            fb = cyfft2bark(i, nfilts, nfft)
+            ffbfc = cyFm(fb, fc)
             fbank[j - 2, i] = c * ffbfc
 
     return fbank
@@ -131,7 +141,10 @@ cpdef np.ndarray[FTYPE_t, ndim=2] bark_helper(str scale, int nfilts, int nfft, n
 """
 Mel & Lin fbanks
 """
-cpdef np.ndarray[FTYPE_t, ndim=2] mel_and_lin_helper(str scale, int nfilts, int nfft, np.ndarray[double, ndim=1] bins):
+cpdef np.ndarray[FTYPE_t, ndim=2] cymel_and_lin_helper(str scale,
+                                                       int nfilts,
+                                                       int nfft,
+                                                       np.ndarray[double, ndim=1] bins):
     """
     Compute fbank helper.
     """
@@ -140,7 +153,10 @@ cpdef np.ndarray[FTYPE_t, ndim=2] mel_and_lin_helper(str scale, int nfilts, int 
 
     # init scaler
     cdef float c
-    c = 1.0 * int(scale == "descendant") + 0.0 * int(scale == "constant")
+    if scale == "descendant" or scale == "constant":
+        c = 1
+    else:
+        c = 0
 
     cdef int j
     cdef double b0
@@ -166,3 +182,34 @@ cpdef np.ndarray[FTYPE_t, ndim=2] mel_and_lin_helper(str scale, int nfilts, int 
         fbank[j, int(b0):int(b1)] = c * (np.arange(int(b0), int(b1)) - int(b0)) / (b1 - b0)
         fbank[j, int(b1):int(b2)] = c * (int(b2) - np.arange(int(b1), int(b2))) / (b2 - b1)
     return fbank
+
+
+"""
+Gammatone fbanks
+"""
+cpdef tuple cycompute_gain(np.ndarray[FTYPE_t, ndim=1] fcs, np.ndarray[FTYPE_t, ndim=1] B,
+                           np.ndarray[FTYPE_t, ndim=1] wT, float T):
+    """
+    Compute Gaina and matrixify computation for speed purposes.
+    """
+    # pre-computations for simplification
+    cdef np.ndarray[FTYPE_t, ndim=1] K = np.exp(B * T)
+    cdef np.ndarray[FTYPE_t, ndim=1] Cos = np.cos(2 * fcs * np.pi * T)
+    cdef np.ndarray[FTYPE_t, ndim=1] Sin = np.sin(2 * fcs * np.pi * T)
+    cdef float Smax = np.sqrt(3 + 2**(3 / 2))
+    cdef float Smin = np.sqrt(3 - 2**(3 / 2))
+
+    # define A matrix rows
+    cdef np.ndarray[FTYPE_t, ndim=1] A11 = (Cos + Smax * Sin) / K
+    cdef np.ndarray[FTYPE_t, ndim=1] A12 = (Cos - Smax * Sin) / K
+    cdef np.ndarray[FTYPE_t, ndim=1] A13 = (Cos + Smin * Sin) / K
+    cdef np.ndarray[FTYPE_t, ndim=1] A14 = (Cos - Smin * Sin) / K
+
+    # Compute gain (vectorized)
+    cdef np.ndarray[FTYPE_t, ndim=2] A = np.array([A11, A12, A13, A14])
+    Kj = np.exp(1j * wT)
+    Kjmat = np.array([Kj, Kj, Kj, Kj]).T
+    G = 2 * T * Kjmat * (A.T - Kjmat)
+    Coe = -2 / K**2 - 2 * Kj**2 + 2 * (1 + Kj**2) / K
+    Gain = np.abs(G[:, 0] * G[:, 1] * G[:, 2] * G[:, 3] * Coe**-4)
+    return A, Gain
