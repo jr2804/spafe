@@ -1,6 +1,6 @@
 import numpy as np
 from ..utils.exceptions import ParameterError, ErrorMsgs
-from ..cutils.cythonfuncs import chz2bark, cfft2barkmx
+from ..cutils.cythonfuncs import cyhz2mel, cyhz2bark, cyfft2barkmx
 
 # init vars
 F0 = 0
@@ -253,11 +253,10 @@ def fft2melmx(nfft,
     wts = np.zeros((nfilts, nfft))
     fftfrqs = (fs / nfft) * np.arange(0, nfft / 2 + 1)
 
-    min_mel = hz2mel(low_freq, htk)
-    max_mel = hz2mel(high_freq, htk)
+    min_mel = cyhz2mel(low_freq, htk)
+    max_mel = cyhz2mel(high_freq, htk)
     dif_mel = max_mel - min_mel
-    binfrqs = mel2hz(
-        min_mel + np.arange(0, nfilts + 2) * dif_mel / (nfilts + 1), htk)
+    binfrqs = mel2hz(min_mel + np.arange(0, nfilts + 2) * dif_mel / (nfilts + 1), htk)
 
     for i in range(nfilts):
         fs_tmp = binfrqs[np.arange(0, 3) + i]
@@ -268,17 +267,14 @@ def fft2melmx(nfft,
         wts[i, 0:nfft // 2 + 1] = np.maximum(0, np.minimum(loslope, hislope))
 
     if not constamp:
-        wts = np.matmul(
-            np.diag(2 / (binfrqs[2:nfilts + 2] - binfrqs[0:nfilts])), wts)
+        wts = np.matmul(np.diag(2 / (binfrqs[2:nfilts + 2] - binfrqs[0:nfilts])), wts)
 
     return wts
-
 
 
 def fft2barkmx(nfft, fs, nfilts=0, bwidth=1, low_freq=0, high_freq=0):
     """
     Generate a matrix of weights to combine FFT bins into Bark bins.
-
     Args:
         nfft      (int) : the FFT size.
                           (Default is 512)
@@ -292,20 +288,18 @@ def fft2barkmx(nfft, fs, nfilts=0, bwidth=1, low_freq=0, high_freq=0):
                           (Default 0 Hz)
         high_freq (int) : highest band edge of mel filters.
                           (Default sample rate/2)
-
     Notes:
         Optional nfilts specifies the number of output bands required
         (else one per bark), and width is the constant width of each
         band in Bark (default 1).
-
     Returns:
         matrix of weights to combine FFT bins into Bark bins.
     """
     if high_freq == 0:
         high_freq = fs / 2
 
-    min_bark = chz2bark(low_freq)
-    nyqbark = chz2bark(high_freq) - min_bark
+    min_bark = cyhz2bark(low_freq)
+    nyqbark = cyhz2bark(high_freq) - min_bark
 
     if nfilts == 0:
         nfilts = int(np.add(np.ceil(nyqbark), 1))
@@ -316,5 +310,15 @@ def fft2barkmx(nfft, fs, nfilts=0, bwidth=1, low_freq=0, high_freq=0):
     if not isinstance(nfft, int):
         raise ParameterError(ErrorMsgs["nfft"])
 
-    wts = cfft2barkmx(min_bark, nyqbark ,nfft, fs, nfilts, bwidth, low_freq, high_freq)
+    wts = np.zeros((nfilts, nfft))
+    step_barks = nyqbark / (nfilts - 1)
+    binbarks = hz2bark((fs / nfft) * np.arange(0, nfft / 2 + 1))
+
+    for i in range(nfilts):
+        f_bark_mid = min_bark + i * step_barks
+        lof = binbarks - f_bark_mid - 0.5
+        hif = binbarks - f_bark_mid + 0.5
+        wts[i, 0:nfft // 2 + 1] = 10**np.minimum(
+            0,
+            np.minimum(hif, -2.5 * lof) / bwidth)
     return wts

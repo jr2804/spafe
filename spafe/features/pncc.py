@@ -3,6 +3,7 @@ based on https://github.com/supikiti/PNCC/blob/master/pncc.py
 """
 import scipy
 import numpy as np
+from scipy import fftpack
 from ..utils.spectral import stft, powspec
 from ..utils.preprocessing import pre_emphasis
 from ..utils.cepstral import cms, cmvn, lifter_ceps
@@ -218,7 +219,7 @@ def pncc(sig,
     V = U**(1 / 15)
 
     # DCT(.)
-    pnccs = scipy.fftpack.dct(V)[:, :num_ceps]
+    pnccs = fftpack.dct(V)[:, :num_ceps]
 
     # use energy for 1st features column
     if use_energy:

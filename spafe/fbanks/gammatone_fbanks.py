@@ -5,6 +5,7 @@
 based on https://github.com/mcusi/gammatonegram/
 """
 import numpy as np
+from ..cutils.cythonfuncs import cycompute_gain
 from ..utils.exceptions import ParameterError, ErrorMsgs
 
 # Slaney's ERB Filter constants
@@ -15,13 +16,11 @@ minBW = 24.7
 def generate_center_frequencies(min_freq, max_freq, nfilts):
     """
     Compute center frequencies in the ERB scale.
-
     Args:
         min_freq (int) : minimum frequency of the center frequencies domain.
         max_freq (int) : maximum frequency of the center frequencies domain.
         nfilts   (int) : number of filters, that is equivalent to the number of
                         center frequencies to compute.
-
     Returns:
         an array of center frequencies.
     """
@@ -31,8 +30,7 @@ def generate_center_frequencies(min_freq, max_freq, nfilts):
     M = nfilts
 
     # compute center frequencies
-    cfreqs = (max_freq + c) * np.exp((m / M) * np.log(
-        (min_freq + c) / (max_freq + c))) - c
+    cfreqs = (max_freq + c) * np.exp((m / M) * np.log((min_freq + c) / (max_freq + c))) - c
     return cfreqs[::-1]
 
 
@@ -52,25 +50,9 @@ def compute_gain(fcs, B, wT, T):
         a 2d array A used for final computations.
     """
     # pre-computations for simplification
-    K = np.exp(B * T)
-    Cos = np.cos(2 * fcs * np.pi * T)
-    Sin = np.sin(2 * fcs * np.pi * T)
-    Smax = np.sqrt(3 + 2**(3 / 2))
-    Smin = np.sqrt(3 - 2**(3 / 2))
-
-    # define A matrix rows
-    A11 = (Cos + Smax * Sin) / K
-    A12 = (Cos - Smax * Sin) / K
-    A13 = (Cos + Smin * Sin) / K
-    A14 = (Cos - Smin * Sin) / K
-
-    # Compute gain (vectorized)
-    A = np.array([A11, A12, A13, A14])
-    Kj = np.exp(1j * wT)
-    Kjmat = np.array([Kj, Kj, Kj, Kj]).T
-    G = 2 * T * Kjmat * (A.T - Kjmat)
-    Coe = -2 / K**2 - 2 * Kj**2 + 2 * (1 + Kj**2) / K
-    Gain = np.abs(G[:, 0] * G[:, 1] * G[:, 2] * G[:, 3] * Coe**-4)
+    cytuple = cycompute_gain(fcs, B, wT, T)
+    A = cytuple[0]
+    Gain = cytuple[1]
     return A, Gain
 
 

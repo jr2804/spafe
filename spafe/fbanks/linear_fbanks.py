@@ -2,7 +2,7 @@
 #                           linear-filter-banks implementation
 ##############################################################################################
 import numpy as np
-from ..cutils.cythonfuncs import mel_and_lin_helper
+from ..cutils.cythonfuncs import cymel_and_lin_helper
 from ..utils.exceptions import ParameterError, ErrorMsgs
 
 
@@ -51,5 +51,5 @@ def linear_filter_banks(nfilts=20,
     bins = np.floor((nfft + 1) * mel_points / fs)
 
     # compute amps of fbanks
-    fbank = mel_and_lin_helper(scale, nfilts, nfft, bins)
+    fbank = cymel_and_lin_helper(scale, nfilts, nfft, bins)
     return np.abs(fbank)

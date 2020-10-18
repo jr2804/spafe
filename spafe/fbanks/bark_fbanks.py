@@ -4,7 +4,7 @@
 import numpy as np
 from ..utils.converters import fft2bark, bark2fft
 from ..utils.exceptions import ParameterError, ErrorMsgs
-from ..cutils.cythonfuncs import cFm, chz2bark, cfft2bark, bark_helper
+from ..cutils.cythonfuncs import cyFm, cyhz2bark, cybark_helper
 
 
 def bark_filter_banks(nfilts=20,
@@ -46,11 +46,11 @@ def bark_filter_banks(nfilts=20,
         raise ParameterError(ErrorMsgs["high_freq"])
 
     # compute points evenly spaced in Bark scale (points are in Bark)
-    low_bark = chz2bark(low_freq)
-    high_bark = chz2bark(high_freq)
+    low_bark = cyhz2bark(low_freq)
+    high_bark = cyhz2bark(high_freq)
     bark_points = np.linspace(low_bark, high_bark, nfilts + 4)
 
     # we use fft bins, so we have to convert from Bark to fft bin number
     bins = np.floor(bark2fft(bark_points))
-    fbank = bark_helper(scale, nfilts, nfft, bins, bark_points)
+    fbank = cybark_helper(scale, nfilts, nfft, bins, bark_points)
     return np.abs(fbank)

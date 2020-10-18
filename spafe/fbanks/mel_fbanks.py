@@ -3,8 +3,8 @@
 #############################################################################################
 import numpy as np
 from ..utils.converters import hz2mel, mel2hz
-from ..cutils.cythonfuncs import chz2mel, mel_and_lin_helper
 from ..utils.exceptions import ParameterError, ErrorMsgs
+from ..cutils.cythonfuncs import cyhz2mel, cymel_and_lin_helper
 
 
 def mel_filter_banks(nfilts=20,
@@ -46,15 +46,15 @@ def mel_filter_banks(nfilts=20,
         raise ParameterError(ErrorMsgs["high_freq"])
 
     # compute points evenly spaced in mels (ponts are in Hz)
-    low_mel = chz2mel(low_freq, 1)
-    high_mel = chz2mel(high_freq, 1)
+    low_mel = cyhz2mel(low_freq, 1)
+    high_mel = cyhz2mel(high_freq, 1)
     mel_points = np.linspace(low_mel, high_mel, nfilts + 2)
 
     # we use fft bins, so we have to convert from Hz to fft bin number
     bins = np.floor((nfft + 1) * mel2hz(mel_points) / fs)
 
     # compute amps of fbanks
-    fbank = mel_and_lin_helper(scale, nfilts, nfft, bins)
+    fbank = cymel_and_lin_helper(scale, nfilts, nfft, bins)
     return np.abs(fbank)
 
 
