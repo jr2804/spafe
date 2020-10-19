@@ -9,18 +9,8 @@ from ..utils.preprocessing import pre_emphasis
 from ..utils.cepstral import cms, cmvn, lifter_ceps
 from ..utils.exceptions import ParameterError, ErrorMsgs
 from ..fbanks.gammatone_fbanks import gammatone_filter_banks
-
-
-def medium_time_power_calculation(power_stft_signal, M=2):
-    medium_time_power = np.zeros_like(power_stft_signal)
-    power_stft_signal = np.pad(power_stft_signal, [(M, M), (0, 0)], 'constant')
-    for i in range(medium_time_power.shape[0]):
-        medium_time_power[i, :] = sum([
-            1 / float(2 * M + 1) * power_stft_signal[i + k - M, :]
-            for k in range(2 * M + 1)
-        ])
-    return medium_time_power
-
+from ..cutils.cythonfuncs import (cymean_power_normalization, cyweight_smoothing,
+                                  cymedium_time_power_calculation)
 
 def asymmetric_lawpass_filtering(rectified_signal, lm_a=0.999, lm_b=0.5):
     floor_level = np.zeros_like(rectified_signal)
@@ -52,39 +42,9 @@ def temporal_masking(rectified_signal, lam_t=0.85, myu_t=0.2):
     return temporal_masked_signal
 
 
-def weight_smoothing(final_output, medium_time_power, N=4, L=128):
-
-    spectral_weight_smoothing = np.zeros_like(final_output)
-    for m in range(final_output.shape[0]):
-        for l in range(final_output.shape[1]):
-            l_1 = max(l - N, 1)
-            l_2 = min(l + N, L)
-            spectral_weight_smoothing[m, l] = (1 / float(l_2 - l_1 + 1)) * \
-                sum([(final_output[m, l_] / medium_time_power[m, l_])
-                     for l_ in range(l_1, l_2)])
-    return spectral_weight_smoothing
-
-
-def mean_power_normalization(transfer_function,
-                             final_output,
-                             lam_myu=0.999,
-                             L=80,
-                             k=1):
-    myu = np.zeros(shape=(transfer_function.shape[0]))
-    myu[0] = 0.0001
-    normalized_power = np.zeros_like(transfer_function)
-    for m in range(1, transfer_function.shape[0]):
-        myu[m] = lam_myu * myu[m - 1] + \
-            (1 - lam_myu) / L * \
-            sum([transfer_function[m, s] for s in range(0, L - 1)])
-    normalized_power = k * transfer_function / myu[:, None]
-
-    return normalized_power
-
-
 def medium_time_processing(power_stft_signal, nfilts=22):
     # calculate medium time power
-    medium_time_power = medium_time_power_calculation(power_stft_signal)
+    medium_time_power = cymedium_time_power_calculation(power_stft_signal)
     lower_envelope = asymmetric_lawpass_filtering(medium_time_power, 0.999,
                                                   0.5)
     subtracted_lower_envelope = medium_time_power - lower_envelope
@@ -104,9 +64,9 @@ def medium_time_processing(power_stft_signal, nfilts=22):
                  temporal_masked_signal, floor_level)
 
     # weight smoothing
-    spectral_weight_smoothing = weight_smoothing(F,
-                                                 medium_time_power,
-                                                 L=nfilts)
+    spectral_weight_smoothing = cyweight_smoothing(F,
+                                                   medium_time_power,
+                                                   L=nfilts)
     return spectral_weight_smoothing, F
 
 
@@ -214,7 +174,7 @@ def pncc(sig,
     T = P * S
 
     # -> mean power normalization
-    U = mean_power_normalization(T, F, L=nfilts)
+    U = cymean_power_normalization(T, L=nfilts)
     # -> power law non linearity
     V = U**(1 / 15)
 
