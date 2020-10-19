@@ -22,7 +22,6 @@ before_script:
   - pip3 install codacy-coverage
   - pip3 install Cython               # 0.29.21
   - sudo apt-get update
-  - python3 setup.py build_ext --inplace
 
 # command to run tests
 script:
