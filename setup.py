@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import numpy
 import pathlib
 from setuptools import setup, find_packages, Extension
 from Cython.Build import cythonize
@@ -42,5 +43,6 @@ setup (
 
         ext_modules = cythonize(["spafe/cutils/cythonfuncs.pyx"],
                                  annotate=True,
-                                 language_level=3)
+                                 language_level=3),
+        include_dirs=[numpy.get_include()]
 )
