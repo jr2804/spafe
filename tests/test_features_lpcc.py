@@ -18,7 +18,7 @@ def fs():
     return scipy.io.wavfile.read(__EXAMPLE_FILE)[0]
 
 
-@pytest.mark.parametrize('num_ceps', [13, 17])
+@pytest.mark.parametrize('num_ceps', [13, 15])
 def test_lpc2spec(sig, fs, num_ceps):
     """
     test LPC features module for the following:
@@ -35,7 +35,7 @@ def test_lpc2spec(sig, fs, num_ceps):
         True)
 
 
-@pytest.mark.parametrize('num_ceps', [13, 17])
+@pytest.mark.parametrize('num_ceps', [13, 15])
 def test_lpc(sig, fs, num_ceps):
     """
     test LPC features module for the following:
@@ -49,7 +49,7 @@ def test_lpc(sig, fs, num_ceps):
         raise AssertionError
 
 
-@pytest.mark.parametrize('num_ceps', [13, 17])
+@pytest.mark.parametrize('num_ceps', [13, 15])
 @pytest.mark.parametrize('lifter', [0])
 @pytest.mark.parametrize('normalize', [False])
 def test_lpcc(sig, fs, num_ceps, lifter, normalize):

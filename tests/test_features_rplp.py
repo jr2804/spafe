@@ -18,9 +18,9 @@ def fs():
 
 
 @pytest.mark.test_id(207)
-@pytest.mark.parametrize('num_ceps', [13, 19])
+@pytest.mark.parametrize('num_ceps', [13, 15])
 @pytest.mark.parametrize('pre_emph', [False, True])
-@pytest.mark.parametrize('modelorder', [0, 13])
+@pytest.mark.parametrize('modelorder', [0, 23])
 def test_rplp(sig, fs, num_ceps, pre_emph, modelorder):
     """
     test RPLP features module for the following:
