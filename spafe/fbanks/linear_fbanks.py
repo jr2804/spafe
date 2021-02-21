@@ -1,9 +1,14 @@
 ##############################################################################################
 #                           linear-filter-banks implementation
 ##############################################################################################
+import sys
 import numpy as np
-from ..cutils.cythonfuncs import cymel_and_lin_helper
 from ..utils.exceptions import ParameterError, ErrorMsgs
+
+
+USECYTHON = (sys.platform == "linux") and ((3, 5) < sys.version_info <= (3, 9))
+if USECYTHON:
+    from ..cutils.cythonfuncs import cymel_and_lin_helper
 
 
 def linear_filter_banks(nfilts=20,
@@ -49,7 +54,30 @@ def linear_filter_banks(nfilts=20,
 
     # we use fft bins, so we have to convert from Hz to fft bin number
     bins = np.floor((nfft + 1) * mel_points / fs)
+    fbank = np.zeros([nfilts, nfft // 2 + 1])
 
     # compute amps of fbanks
-    fbank = cymel_and_lin_helper(scale, nfilts, nfft, bins)
+    if USECYTHON:
+        fbank = cymel_and_lin_helper(scale, nfilts, nfft, bins)
+    else:
+        # init scaler
+        c = 1 if (scale in ["descendant", "constant"]) else 0
+
+        # compute amps of fbanks
+        for j in range(0, nfilts):
+            b0, b1, b2 = bins[j], bins[j + 1], bins[j + 2]
+
+            # compute scaler
+            if scale == "descendant":
+                c -= 1 / nfilts
+                c = c * (c > 0) + 0 * (c < 0)
+
+            elif scale == "ascendant":
+                c += 1 / nfilts
+                c = c * (c < 1) + 1 * (c > 1)
+
+            # compute fbanks
+            fbank[j, int(b0):int(b1)] = c * (np.arange(int(b0), int(b1)) - int(b0)) / (b1 - b0)
+            fbank[j, int(b1):int(b2)] = c * (int(b2) - np.arange(int(b1), int(b2))) / (b2 - b1)
+
     return np.abs(fbank)

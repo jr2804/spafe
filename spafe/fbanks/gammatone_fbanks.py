@@ -4,9 +4,15 @@
 """
 based on https://github.com/mcusi/gammatonegram/
 """
+import sys
 import numpy as np
-from ..cutils.cythonfuncs import cycompute_gain
 from ..utils.exceptions import ParameterError, ErrorMsgs
+
+
+USECYTHON = (sys.platform == "linux") and ((3, 5) < sys.version_info <= (3, 9))
+if USECYTHON:
+    from ..cutils.cythonfuncs import cycompute_gain
+
 
 # Slaney's ERB Filter constants
 EarQ = 9.26449
@@ -49,10 +55,34 @@ def compute_gain(fcs, B, wT, T):
         a 2d numpy array representing the filter gains.
         a 2d array A used for final computations.
     """
-    # pre-computations for simplification
-    cytuple = cycompute_gain(fcs, B, wT, T)
-    A = cytuple[0]
-    Gain = cytuple[1]
+    if USECYTHON:
+        # pre-computations for simplification
+        cytuple = cycompute_gain(fcs, B, wT, T)
+        A = cytuple[0]
+        Gain = cytuple[1]
+
+    else:
+        # pre-computations for simplification
+        K = np.exp(B * T)
+        Cos = np.cos(2 * fcs * np.pi * T)
+        Sin = np.sin(2 * fcs * np.pi * T)
+        Smax = np.sqrt(3 + 2**(3 / 2))
+        Smin = np.sqrt(3 - 2**(3 / 2))
+
+        # define A matrix rows
+        A11 = (Cos + Smax * Sin) / K
+        A12 = (Cos - Smax * Sin) / K
+        A13 = (Cos + Smin * Sin) / K
+        A14 = (Cos - Smin * Sin) / K
+
+        # Compute gain (vectorized)
+        A = np.array([A11, A12, A13, A14])
+        Kj = np.exp(1j * wT)
+        Kjmat = np.array([Kj, Kj, Kj, Kj]).T
+        G = 2 * T * Kjmat * (A.T - Kjmat)
+        Coe = -2 / K**2 - 2 * Kj**2 + 2 * (1 + Kj**2) / K
+        Gain = np.abs(G[:, 0] * G[:, 1] * G[:, 2] * G[:, 3] * Coe**-4)
+
     return A, Gain
 
 
