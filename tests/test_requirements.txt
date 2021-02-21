@@ -5,4 +5,6 @@ codecov
 coveralls
 pytest-xdist
 codacy-coverage
+numpy
+scipy
 Cython==0.29.21
