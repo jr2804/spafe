@@ -158,7 +158,8 @@ cpdef np.ndarray[FLOAT_t, ndim=2] cybark_helper(str scale, int nfilts,
             c = c + 1 / nfilts
             c = c * (c < 1) + 1 * (c > 1)
 
-        for i in range(int(bins[j - 2]), int(bins[j + 2])):
+        int
+        for i in range(np.ceil(bins[j - 2]), np.ceil(bins[j + 2])):
             fc = bark_points[j]
             fb = cyfft2bark(i, nfilts, nfft)
             ffbfc = cyFm(fb, fc)
