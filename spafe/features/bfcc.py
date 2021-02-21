@@ -22,13 +22,12 @@ def intensity_power_law(w):
     def f(w, c, p):
         return w**2 + c * 10**p
 
-    E = (f(w, 56.8, 6) * w**4) / (f(w, 6.3, 6) * f(w, .38, 9) *
-                                  f(w**3, 9.58, 26))
+    E = (f(w, 56.8, 6) * w**4) / (f(w, 6.3, 6) * f(w, .38, 9) * f(w**3, 9.58, 26))
     return E**(1 / 3)
 
 
 def bfcc(sig,
-         fs=16000,
+         fs,
          num_ceps=13,
          pre_emph=0,
          pre_emph_coeff=0.97,
@@ -43,7 +42,8 @@ def bfcc(sig,
          dct_type=2,
          use_energy=False,
          lifter=22,
-         normalize=1):
+         normalize=1,
+         fbanks=None):
     """
     Compute the bark-frequency cepstral coefﬁcients (BFCC features) from an audio signal.
 
@@ -117,12 +117,17 @@ def bfcc(sig,
     abs_fft_values = np.abs(fourrier_transform)
 
     # -> x Bark-fbanks
-    bark_fbanks_mat = bark_filter_banks(nfilts=nfilts,
-                                        nfft=nfft,
-                                        fs=fs,
-                                        low_freq=low_freq,
-                                        high_freq=high_freq,
-                                        scale=scale)
+    if fbanks is None:
+        bark_fbanks_mat = bark_filter_banks(nfilts=nfilts,
+                                            nfft=nfft,
+                                            fs=fs,
+                                            low_freq=low_freq,
+                                            high_freq=high_freq,
+                                            scale=scale)
+    else:
+        bark_fbanks_mat = fbanks
+
+    # compute features
     features = np.dot(abs_fft_values, bark_fbanks_mat.T)
 
     # Equal-loudness power law (.) -> Intensity-loudness power law

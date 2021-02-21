@@ -25,7 +25,8 @@ def lfcc(sig,
          dct_type=2,
          use_energy=False,
          lifter=22,
-         normalize=1):
+         normalize=1,
+         fbanks=None):
     """
     Compute the linear-frequency cepstral coefﬁcients (GFCC features) from an audio signal.
 
@@ -99,12 +100,17 @@ def lfcc(sig,
     abs_fft_values = np.abs(fourrier_transform)
 
     #  -> x linear-fbanks
-    linear_fbanks_mat = linear_filter_banks(nfilts=nfilts,
-                                            nfft=nfft,
-                                            fs=fs,
-                                            low_freq=low_freq,
-                                            high_freq=high_freq,
-                                            scale=scale)
+    if fbanks is None:
+        linear_fbanks_mat = linear_filter_banks(nfilts=nfilts,
+                                                nfft=nfft,
+                                                fs=fs,
+                                                low_freq=low_freq,
+                                                high_freq=high_freq,
+                                                scale=scale)
+    else:
+        linear_fbanks_mat = fbanks
+
+    # compute features
     features = np.dot(abs_fft_values, linear_fbanks_mat.T)
 
     # -> log(.)

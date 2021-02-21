@@ -26,7 +26,8 @@ def psrcc(sig,
           dct_type=2,
           use_energy=False,
           lifter=22,
-          normalize=1):
+          normalize=1,
+          fbanks=None):
     """
     Compute the Phase-based Spectral Root Cepstral Coefﬁcients (PSRCC) from an
     audio signal.
@@ -105,12 +106,17 @@ def psrcc(sig,
                                        0) + fft_phases * (fft_phases > 0)
 
     # -> x Mel-fbanks
-    mel_fbanks_mat = mel_filter_banks(nfilts=nfilts,
-                                      nfft=nfft,
-                                      fs=fs,
-                                      low_freq=low_freq,
-                                      high_freq=high_freq,
-                                      scale=scale)
+    if fbanks is None:
+        mel_fbanks_mat = mel_filter_banks(nfilts=nfilts,
+                                          nfft=nfft,
+                                          fs=fs,
+                                          low_freq=low_freq,
+                                          high_freq=high_freq,
+                                          scale=scale)
+    else:
+        mel_fbanks_mat = fbanks
+
+    # compute features
     features = np.dot(fft_phases, mel_fbanks_mat.T)
 
     # -> (.)^(gamma)

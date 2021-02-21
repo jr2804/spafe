@@ -164,8 +164,9 @@ def pncc(sig,
                                               low_freq=low_freq,
                                               high_freq=high_freq,
                                               scale=scale)
-    P = np.dot(a=spectrum_power[:, :gammatone_filter.shape[1]],
-               b=gammatone_filter.T)
+
+    size_matching = min(gammatone_filter.shape[1], spectrum_power.shape[1])
+    P = np.dot(a=spectrum_power[:, :size_matching], b=gammatone_filter.T[:size_matching ,:])
 
     # medium_time_processing
     S, F = medium_time_processing(P, nfilts=nfilts)

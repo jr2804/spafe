@@ -23,7 +23,8 @@ def mfcc(sig,
          dct_type=2,
          use_energy=False,
          lifter=22,
-         normalize=1):
+         normalize=1,
+         fbanks=None):
     """
     Compute MFCC features (Mel-frequency cepstral coefficients) from an audio
     signal. This function offers multiple approaches to features extraction
@@ -105,12 +106,17 @@ def mfcc(sig,
     abs_fft_values = (1 / 1) * np.abs(fourrier_transform)
 
     #  -> x Mel-fbanks
-    mel_fbanks_mat = mel_filter_banks(nfilts=nfilts,
-                                      nfft=nfft,
-                                      fs=fs,
-                                      low_freq=low_freq,
-                                      high_freq=high_freq,
-                                      scale=scale)
+    if fbanks is None:
+        mel_fbanks_mat = mel_filter_banks(nfilts=nfilts,
+                                          nfft=nfft,
+                                          fs=fs,
+                                          low_freq=low_freq,
+                                          high_freq=high_freq,
+                                          scale=scale)
+    else:
+        mel_fbanks_mat = fbanks
+
+    # compute features
     features = np.dot(abs_fft_values, mel_fbanks_mat.T)
 
     # -> log(.) -> DCT(.)
@@ -157,7 +163,8 @@ def imfcc(sig,
           dct_type=2,
           use_energy=False,
           lifter=22,
-          normalize=1):
+          normalize=1,
+          fbanks=None):
     """
     Compute Inverse MFCC features from an audio signal.
 
@@ -231,12 +238,17 @@ def imfcc(sig,
     abs_fft_values = np.abs(fourrier_transform)
 
     #  -> x Mel-fbanks -> log(.) -> DCT(.)
-    imel_fbanks_mat = inverse_mel_filter_banks(nfilts=nfilts,
-                                               nfft=nfft,
-                                               fs=fs,
-                                               low_freq=low_freq,
-                                               high_freq=high_freq,
-                                               scale=scale)
+    if fbanks is None:
+        imel_fbanks_mat = inverse_mel_filter_banks(nfilts=nfilts,
+                                                   nfft=nfft,
+                                                   fs=fs,
+                                                   low_freq=low_freq,
+                                                   high_freq=high_freq,
+                                                   scale=scale)
+    else:
+        imel_fbanks_mat = fbanks
+
+    # compute features
     features = np.dot(abs_fft_values, imel_fbanks_mat.T)
 
     # -> log(.)

@@ -1,10 +1,10 @@
 import numpy as np
 from scipy.fftpack import ifft
-from spafe.utils import levinsondr
-from spafe.utils.filters import rasta_filter
+from ..utils import levinsondr
+from ..utils.filters import rasta_filter
 from ..utils.preprocessing import pre_emphasis
-from spafe.utils.cepstral import cms, cmvn, lifter_ceps
-from spafe.utils.spectral import powspec, audspec, postaud, invpowspec
+from ..utils.cepstral import cms, cmvn, lifter_ceps
+from ..utils.spectral import powspec, audspec, postaud, invpowspec
 
 
 def lpcc(sig,

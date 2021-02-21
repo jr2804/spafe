@@ -27,7 +27,8 @@ def ngcc(sig,
          dct_type=2,
          use_energy=False,
          lifter=22,
-         normalize=1):
+         normalize=1,
+         fbanks=None):
     """
     Compute the normalized gammachirp cepstral coefﬁcients (NGCC features) from an audio signal.
 
@@ -101,12 +102,15 @@ def ngcc(sig,
     abs_fft_values = np.abs(fourrier_transform)**2
 
     #  -> x Gammatone fbanks -> log(.) -> DCT(.)
-    gammatone_fbanks_mat = gammatone_filter_banks(nfilts=nfilts,
-                                                  nfft=nfft,
-                                                  fs=fs,
-                                                  low_freq=low_freq,
-                                                  high_freq=high_freq,
-                                                  scale=scale)
+    if fbanks is None:
+        gammatone_fbanks_mat = gammatone_filter_banks(nfilts=nfilts,
+                                                      nfft=nfft,
+                                                      fs=fs,
+                                                      low_freq=low_freq,
+                                                      high_freq=high_freq,
+                                                      scale=scale)
+    else:
+        gammatone_fbanks_mat = fbanks
 
     # compute the filterbank energies
     features = np.dot(abs_fft_values, gammatone_fbanks_mat.T)

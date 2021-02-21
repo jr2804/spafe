@@ -26,7 +26,8 @@ def msrcc(sig,
           dct_type=2,
           use_energy=False,
           lifter=22,
-          normalize=1):
+          normalize=1,
+          fbanks=None):
     """
     Compute the Magnitude-based Spectral Root Cepstral Coefﬁcients (MSRCC) from
     an audio signal.
@@ -103,12 +104,17 @@ def msrcc(sig,
     abs_fft_values = np.abs(fourrier_transform)**2
 
     # -> x Mel-fbanks
-    mel_fbanks_mat = mel_filter_banks(nfilts=nfilts,
-                                      nfft=nfft,
-                                      fs=fs,
-                                      low_freq=low_freq,
-                                      high_freq=high_freq,
-                                      scale=scale)
+    if fbanks is None:
+        mel_fbanks_mat = mel_filter_banks(nfilts=nfilts,
+                                          nfft=nfft,
+                                          fs=fs,
+                                          low_freq=low_freq,
+                                          high_freq=high_freq,
+                                          scale=scale)
+    else:
+        mel_fbanks_mat = fbanks
+
+    # compute features
     features = np.dot(abs_fft_values, mel_fbanks_mat.T)
 
     # -> (.)^(gamma)
