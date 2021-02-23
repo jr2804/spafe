@@ -30,7 +30,6 @@ before_script:
 
 # command to run tests
 script:
-  - travis_wait 75 ./run_tests.sh
   # Run tests for 48khz
   - echo "Tests for 48000Hz wave"
   - ln -sf $PWD/tests/test_files/test_file_48000Hz.wav $PWD/test.wav
