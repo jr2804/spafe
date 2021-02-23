@@ -1,20 +1,29 @@
-language: python
-python:
-  - "3.5"
-  - "3.6"
-  - "3.7"
-  - "3.8"
-  - "3.9"
+environment:
+  matrix:
+    - PYTHON_VERSION: 3.5
+      MINICONDA: C:\Miniconda
+    - PYTHON_VERSION: 3.6
+      MINICONDA: C:\Miniconda3
+    - PYTHON_VERSION: 3.7
+      MINICONDA: C:\Miniconda3
+    - PYTHON_VERSION: 3.8
+      MINICONDA: C:\Miniconda
+    - PYTHON_VERSION: 3.9
+      MINICONDA: C:\Miniconda3
 
 cache:
-  - pip
+    - "%MINICONDA%\\envs -> appveyor.yml, setup.py"
 
-# command to install dependencies
-before_script:
-  - sudo apt-get update
-  - sudo apt-get install python3
-  - sudo apt-get install python3-pip
-  - sudo apt-get install python3-setuptools
+init:
+  - "ECHO %PYTHON_VERSION% %MINICONDA%"
+
+install:
+  - "set PATH=%MINICONDA%;%MINICONDA%\\Scripts;%PATH%"
+  - conda config --set always_yes yes --set changeps1 no
+  - conda update -q conda
+  - conda info -a
+  - "conda create -q -n test-environment python=%PYTHON_VERSION% numpy scipy nose"
+  - activate test-environment
   - pip3 install --upgrade setuptools
   - pip3 install matplotlib
   - pip3 install pytest-cov
@@ -26,11 +35,9 @@ before_script:
   - pip3 install numpy
   - pip3 install scipy
   - pip3 install Cython==0.29.21
-  - sudo apt-get update
 
-# command to run tests
-script:
-  - travis_wait 75 ./run_tests.sh
+build: off
+test_script:
   # Run tests for 48khz
   - echo "Tests for 48000Hz wave"
   - ln -sf $PWD/tests/test_files/test_file_48000Hz.wav $PWD/test.wav
@@ -55,10 +62,3 @@ script:
   - echo "Tests for 16000Hz wave"
   - ln -sf $PWD/tests/test_files/test_file_16000Hz.wav $PWD/test.wav
   - pytest --cache-clear -n 8 -q --cov=./spafe tests/test_*.py
-
-after_success:
-  - codecov
-  - coveralls
-  - coverage xml
-  - export CODACY_PROJECT_TOKEN=88a615a4de8445e1ab801be6962f57ef
-  - python-codacy-coverage -r coverage.xml

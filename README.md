@@ -59,7 +59,7 @@ pip install git+git://github.com/SuperKogito/spafe
 
 How to use
 ==========
-
+![](examples/examples.jpg)
 Various examples on how to use spafe filter banks or feature extraction techniques are available under [examples](https://github.com/SuperKogito/spafe/tree/master/examples).
 
 Contributing
