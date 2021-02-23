@@ -7,19 +7,12 @@ from spafe.utils.exceptions import ParameterError
 from spafe.utils.cepstral import cms, cmvn, lifter_ceps
 
 
-@pytest.fixture
-def sig():
-    __EXAMPLE_FILE = 'test.wav'
-    return scipy.io.wavfile.read(__EXAMPLE_FILE)[1]
-
-
-@pytest.fixture
-def fs():
-    __EXAMPLE_FILE = 'test.wav'
-    return scipy.io.wavfile.read(__EXAMPLE_FILE)[0]
-
-
 @pytest.mark.test_id(202)
+@pytest.mark.parametrize('sig_and_fs', [scipy.io.wavfile.read("tests/test_files/test_file_8000Hz.wav"),
+                                        scipy.io.wavfile.read("tests/test_files/test_file_16000Hz.wav"),
+                                        scipy.io.wavfile.read("tests/test_files/test_file_32000Hz.wav"),
+                                        scipy.io.wavfile.read("tests/test_files/test_file_44100Hz.wav"),
+                                        scipy.io.wavfile.read("tests/test_files/test_file_48000Hz.wav")])
 @pytest.mark.parametrize('num_ceps', [13, 39])
 @pytest.mark.parametrize('pre_emph', [False, True])
 @pytest.mark.parametrize('nfilts', [24, 36])
@@ -30,7 +23,7 @@ def fs():
 @pytest.mark.parametrize('use_energy', [False, True])
 @pytest.mark.parametrize('lifter', [0, 5])
 @pytest.mark.parametrize('normalize', [False, True])
-def test_ngcc(sig, fs, num_ceps, pre_emph, nfilts, nfft, low_freq, high_freq, dct_type,
+def test_ngcc(sig_and_fs, num_ceps, pre_emph, nfilts, nfft, low_freq, high_freq, dct_type,
               use_energy, lifter, normalize):
     """
     test NGCC features module for the following:
@@ -43,6 +36,8 @@ def test_ngcc(sig, fs, num_ceps, pre_emph, nfilts, nfft, low_freq, high_freq, dc
         - check normalization.
         - check liftering.
     """
+    sig, fs = sig_and_fs[1], sig_and_fs[0]
+
     # check error for number of filters is smaller than number of cepstrums
     if (low_freq < 0) or (high_freq > fs / 2) or (nfilts < num_ceps) :
         with pytest.raises(ParameterError):
