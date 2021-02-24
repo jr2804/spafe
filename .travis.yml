@@ -22,7 +22,7 @@ before_script:
   - pip3 install codecov
   - pip3 install coveralls
   - pip3 install codacy-coverage
-  - pip3 install numpy==1.20.1
+  - pip3 install numpy==1.18.5
   - pip3 install scipy
   - pip3 install Cython==0.29.21
   - sudo apt-get update
