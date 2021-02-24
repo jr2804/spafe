@@ -30,12 +30,11 @@ install:
   - pip install pytest
   - pip install codecov
   - pip install coveralls
-  - pip install pytest-xdist
   - pip install codacy-coverage
-  - pip install numpy
+  - pip install numpy==1.20.1
   - pip install scipy
   - pip install Cython==0.29.21
 
 build: off
 test_script:
-  - pytest --cache-clear -n 8 -q --cov=./spafe tests/test_*.py
+  - pytest -q -x --cov=./spafe tests/test_*.py
