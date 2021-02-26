@@ -18,7 +18,7 @@ jobs:
         python-version: ${{ matrix.python-version }}
     - name: Install dependencies
       run: |
-        python -m pip install --upgrade pip        
+        python -m pip install --upgrade pip
         pip install matplotlib
         pip install pytest-cov
         pip install pytest
@@ -26,16 +26,16 @@ jobs:
         pip install coveralls
         pip install codacy-coverage
         pip install numpy
-        pip install scipy 
+        pip install scipy
         pip install mock
         pip install Cython==0.29.21
     - name: Test with pytest
       run: |
-        pytest -q -x --cov=./ || --force-yes
+        pytest -q -x --cov=./spafe
     - name: Upload coverage statistics
+      env:
+        GITHUB_TOKEN: $ secrets.GITHUB_TOKEN
       run: |
         codecov
         coveralls
         coverage xml
-        export CODACY_PROJECT_TOKEN=88a615a4de8445e1ab801be6962f57ef
-        python-codacy-coverage -r coverage.xml
