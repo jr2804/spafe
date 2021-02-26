@@ -1,0 +1,40 @@
+name: Test spafe
+
+on: [push]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: [3.5, 3.6, 3.7, 3.8, 3.9]
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v2
+      with:
+        python-version: ${{ matrix.python-version }}
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip        
+        pip install matplotlib
+        pip install pytest-cov
+        pip install pytest
+        pip install codecov
+        pip install coveralls
+        pip install codacy-coverage
+        pip install numpy==1.18.5
+        pip install scipy
+        pip install Cython==0.29.21
+    - name: Test with pytest
+      run: |
+        pytest -q -x --cov=./ || --force-yes
+    - name: Upload coverage statistics
+      run: |
+        codecov
+        coveralls
+        coverage xml
+        export CODACY_PROJECT_TOKEN=88a615a4de8445e1ab801be6962f57ef
+        python-codacy-coverage -r coverage.xml
