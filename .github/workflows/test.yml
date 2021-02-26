@@ -26,7 +26,8 @@ jobs:
         pip install coveralls
         pip install codacy-coverage
         pip install numpy
-        pip install scipy
+        pip install scipy 
+        pip install mock
         pip install Cython==0.29.21
     - name: Test with pytest
       run: |
