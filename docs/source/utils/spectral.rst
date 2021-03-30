@@ -1,5 +1,5 @@
 spafe.utils.spectral
-========================
+====================
 
 
 .. automodule:: spafe.utils.spectral

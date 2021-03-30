@@ -1,5 +1,5 @@
 spafe.fbanks.mel_fbanks
-========================
+=======================
 
 
 .. automodule:: spafe.fbanks.mel_fbanks

@@ -1,5 +1,5 @@
 spafe.features.rplp
-====================
+===================
 
 
 .. automodule:: spafe.features.rplp

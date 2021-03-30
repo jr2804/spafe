@@ -1,5 +1,5 @@
 spafe.utils.filters
-========================
+===================
 
 
 .. automodule:: spafe.utils.filters

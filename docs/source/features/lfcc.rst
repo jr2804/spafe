@@ -1,5 +1,5 @@
 spafe.features.lfcc
-====================
+===================
 
 
 .. automodule:: spafe.features.lfcc

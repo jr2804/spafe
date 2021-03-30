@@ -1,5 +1,5 @@
 spafe.utils.levinsondr
-========================
+======================
 
 
 .. automodule:: spafe.utils.levinsondr

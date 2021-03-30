@@ -1,5 +1,5 @@
 spafe.features.pncc
-====================
+===================
 
 
 .. automodule:: spafe.features.pncc

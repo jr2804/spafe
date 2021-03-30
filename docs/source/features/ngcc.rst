@@ -1,5 +1,5 @@
 spafe.features.ngcc
-====================
+===================
 
 
 .. automodule:: spafe.features.ngcc

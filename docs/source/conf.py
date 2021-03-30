@@ -18,11 +18,15 @@ sys.path.insert(0, os.path.abspath('../../spafe/'))
 # -- Project information -----------------------------------------------------
 
 project   = 'spafe'
-copyright = '2019, spafe'
+copyright = '2019-2021, spafe'
 author    = 'Ayoub Malek'
-
+html_favicon = '_static/favicon.ico'
+version = ' version 0.1.3 '
 
 # -- General configuration ---------------------------------------------------
+def setup(app):
+    app.add_stylesheet('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css')
+    app.add_stylesheet("css/cstyle.css")
 
 # Add any Sphinx extension module names here, as strings. They can be
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
@@ -31,7 +35,10 @@ extensions = [
                 'sphinx.ext.autodoc',
                 'sphinx.ext.viewcode',
                 'sphinx.ext.todo',
+                'sphinx.ext.intersphinx',
                 'sphinxcontrib.napoleon',
+                'sphinx_multiversion',
+                'numpydoc'
              ]
 
 todo_include_todos = True
@@ -66,10 +73,29 @@ pygments_style = 'sphinx'
 
 # The theme to use for HTML and HTML Help pages.  See the documentation for
 # a list of builtin themes.
-#
+
+import sphinx_rtd_theme
+
 html_theme = 'sphinx_rtd_theme'
+html_theme_options = {
+                        'canonical_url': '',
+                        'analytics_id': 'UA-133660046-1',  #  Provided by Google in your dashboard
+                        'logo_only': True,
+                        'display_version': True,
+                        'prev_next_buttons_location': 'bottom',
+                        'style_external_links': False,
+                        # Toc options
+                        'collapse_navigation': False,
+                        'sticky_navigation': False,
+                        'navigation_depth': 4,
+                        'includehidden': True,
+                        'titles_only': False
+}
+html_logo = "_static/logo.jpg"
 
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,
 # so a file named "default.css" will overwrite the builtin "default.css".
 html_static_path = ['_static']
+intersphinx_mapping = {'python': ('https://docs.python.org/3', None),
+                       'numpy': ('http://docs.scipy.org/doc/numpy', None)}

@@ -1,5 +1,5 @@
 spafe.utils.cepstral
-========================
+====================
 
 
 .. automodule:: spafe.utils.cepstral
