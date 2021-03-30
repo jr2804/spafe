@@ -23,12 +23,12 @@ class FundamentalFrequenciesExtractor:
         This solution is implemented directly with np fft.
 
         Args:
-            x       (array) : audio data
-            N       (int)   : length of data
-            tau_max (int)   : integration window size
+            x  (numpy.ndarray) : audio data
+            N          (int)   : length of data
+            tau_max    (int)   : integration window size
 
         Returns:
-            (list) : difference function
+            lis : difference function
         """
         x = np.array(x, np.float64)
         w = x.size
@@ -48,7 +48,7 @@ class FundamentalFrequenciesExtractor:
             tau_max (int)  : integration window size
 
         Returns:
-            (list) : cumulative mean normalized difference function
+            list : cumulative mean normalized difference function
         """
         cmndf = df[1:] * range(1, N) / np.cumsum(df[1:]).astype(
             float)  # scipy method
@@ -66,7 +66,7 @@ class FundamentalFrequenciesExtractor:
                                necessary to compute pitch frequency
 
         Returns:
-            (float) : fundamental period if there is values under threshold, 0 otherwise
+            float : fundamental period if there is values under threshold, 0 otherwise
         """
         tau = tau_min
         while tau < tau_max:
@@ -101,7 +101,7 @@ class FundamentalFrequenciesExtractor:
                                 first minimum of the CMND fubction below this threshold.
 
         Returns:
-            (tuple) : tuple include the following
+            tuple : tuple include the following
                           - pitches       : list of fundamental frequencies,
                           - harmonic_rates: list of harmonic rate values for each fundamental
                                             frequency value (= confidence value)
@@ -165,7 +165,7 @@ class FundamentalFrequenciesExtractor:
                                 first minimum of the CMND fubction below this threshold.
 
         Returns:
-            (tuple) : tuple include the following
+            tuple : tuple include the following
                           - pitches       : list of fundamental frequencies,
                           - harmonic_rates: list of harmonic rate values for each
                                             fundamental frequency value (= confidence value)

@@ -25,7 +25,7 @@ def get_dominant_frequencies(sig,
     Returns a list of dominant audio frequencies of a given wave file.
 
     Args:
-        sig          (array) : name of an audio file name.
+        sig          (numpy.ndarray) : name of an audio file name.
         fs             (int) : sampling rate (= average number of samples pro 1 sec)
         butter_filter (bool) : choose whether to apply a Butterworth filter or not.
                                Default is False.
@@ -44,7 +44,7 @@ def get_dominant_frequencies(sig,
         debug         (bool) : choose whether to plot the results or not.
                                Default is False
     Returns:
-        (array) : array of dominant frequencies.
+        (numpy.ndarray) : array of dominant frequencies.
     """
     if butter_filter:
         # apply Band pass Butterworth filter
