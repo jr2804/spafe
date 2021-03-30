@@ -15,10 +15,10 @@ def hz2erb(f):
     Convert Hz frequencies to Bark.
 
     Args:
-        f (np.array) : input frequencies [Hz].
+        f (numpy.ndarray) : input frequencies [Hz].
 
     Returns:
-        (np.array): frequencies in Bark [Bark].
+        numpy.ndarray : frequencies in Bark [Bark].
     """
     return 24.7 * (4.37 * (f / 1000) + 1)
 
@@ -28,10 +28,10 @@ def erb2hz(fe):
     Convert Bark frequencies to Hz.
 
     Args:
-        fb (np.array) : input frequencies [Bark].
+        fb (numpy.ndarray) : input frequencies [Bark].
 
     Returns:
-        (np.array)  : frequencies in Hz [Hz].
+        numpy.ndarray  : frequencies in Hz [Hz].
     """
     return ((fe / 24.7) - 1) * (1000. / 4.37)
 
@@ -41,10 +41,10 @@ def fft2erb(fft, fs=16000, nfft=512):
     Convert Bark frequencies to Hz.
 
     Args:
-        fft (np.array) : fft bin numbers.
+        fft (numpy.ndarray) : fft bin numbers.
 
     Returns:
-        (np.array): frequencies in Bark [Bark].
+        numpy.ndarray : frequencies in Bark [Bark].
     """
     return hz2erb((fft * fs) / (nfft + 1))
 
@@ -54,10 +54,10 @@ def erb2fft(fb, fs=16000, nfft=512):
     Convert Bark frequencies to fft bins.
 
     Args:
-        fb (np.array): frequencies in Bark [Bark].
+        fb (numpy.ndarray): frequencies in Bark [Bark].
 
     Returns:
-        (np.array) : fft bin numbers.
+        numpy.ndarray : fft bin numbers.
     """
     return (nfft + 1) * erb2hz(fb) / fs
 
@@ -67,10 +67,10 @@ def hz2bark(f):
     Convert Hz frequencies to Bark acoording to Wang, Sekey & Gersho, 1992.
 
     Args:
-        f (np.array) : input frequencies [Hz].
+        f (numpy.ndarray) : input frequencies [Hz].
 
     Returns:
-        (np.array): frequencies in Bark [Bark].
+        numpy.ndarray : frequencies in Bark [Bark].
     """
     return 6. * np.arcsinh(f / 600.)
 
@@ -80,10 +80,10 @@ def bark2hz(fb):
     Convert Bark frequencies to Hz.
 
     Args:
-        fb (np.array) : input frequencies [Bark].
+        fb (numpy.ndarray) : input frequencies [Bark].
 
     Returns:
-        (np.array)  : frequencies in Hz [Hz].
+        numpy.ndarray : frequencies in Hz [Hz].
     """
     return 600. * np.sinh(fb / 6.)
 
@@ -93,10 +93,10 @@ def fft2hz(fft, fs=16000, nfft=512):
     Convert Bark frequencies to Hz.
 
     Args:
-        fft (np.array) : fft bin numbers.
+        fft (numpy.ndarray) : fft bin numbers.
 
     Returns:
-        (np.array): frequencies in Bark [Bark].
+        numpy.ndarray : frequencies in Bark [Bark].
     """
     return (fft * fs) / (nfft + 1)
 
@@ -106,10 +106,10 @@ def hz2fft(fb, fs=16000, nfft=512):
     Convert Bark frequencies to fft bins.
 
     Args:
-        fb (np.array): frequencies in Bark [Bark].
+        fb (numpy.ndarray): frequencies in Bark [Bark].
 
     Returns:
-        (np.array) : fft bin numbers.
+        numpy.ndarray : fft bin numbers.
     """
     return (nfft + 1) * fb / fs
 
@@ -119,10 +119,10 @@ def fft2bark(fft, fs=16000, nfft=512):
     Convert Bark frequencies to Hz.
 
     Args:
-        fft (np.array) : fft bin numbers.
+        fft (numpy.ndarray) : fft bin numbers.
 
     Returns:
-        (np.array): frequencies in Bark [Bark].
+        numpy.ndarray : frequencies in Bark [Bark].
     """
     return hz2bark((fft * fs) / (nfft + 1))
 
@@ -132,10 +132,10 @@ def bark2fft(fb, fs=16000, nfft=512):
     Convert Bark frequencies to fft bins.
 
     Args:
-        fb (np.array): frequencies in Bark [Bark].
+        fb (numpy.ndarray): frequencies in Bark [Bark].
 
     Returns:
-        (np.array) : fft bin numbers.
+        numpy.ndarray : fft bin numbers.
     """
     return (nfft + 1) * bark2hz(fb) / fs
 
@@ -149,7 +149,7 @@ def hz2mel(hz, htk=1):
          htk: Optional variable, if htk = 1 uses the mel axis defined in the HTKBook otherwise use Slaney's formula.
 
     Returns:
-        a value in Mels. If an array was passed in, an identical sized array is returned.
+        numpy.ndarray : values in Mels. If an array was passed in, an identical sized array is returned.
     """
     if htk == 1:
         return 2595 * np.log10(1 + hz / 700.)
@@ -180,7 +180,7 @@ def mel2hz(mel, htk=1):
              HTKBook otherwise use Slaney's formula.
 
     Returns:
-        a value in Hertz. If an array was passed in, an identical sized array is returned.
+        numpy.ndarray : values in Hertz. If an array was passed in, an identical sized array is returned.
     """
     if htk == 1:
         return 700 * (10**(mel / 2595.0) - 1)
@@ -235,7 +235,7 @@ def fft2melmx(nfft,
         `fft2melmx(nfft=512, fs=8000, nfilts=40, bwidth=1, low_freq=133.33, high_freq=6855.5, 0)`
 
     Returns:
-        matrix of weights to combine FFT bins into Mel bins.
+        numpy.ndarray : matrix of weights to combine FFT bins into Mel bins.
 
     """
     if high_freq == 0:
@@ -293,7 +293,7 @@ def fft2barkmx(nfft, fs, nfilts=0, bwidth=1, low_freq=0, high_freq=0):
         (else one per bark), and width is the constant width of each
         band in Bark (default 1).
     Returns:
-        matrix of weights to combine FFT bins into Bark bins.
+        numpy.ndarray : matrix of weights to combine FFT bins into Bark bins.
     """
     if high_freq == 0:
         high_freq = fs / 2

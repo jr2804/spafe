@@ -7,10 +7,10 @@ def cmn(x):
     Mean normalization.
 
     Args:
-        x (array) : input data.
+        x (numpy.ndarray) : input data.
 
     Returns:
-        array with the mean normalized data.
+        numpy.ndarray : array with the mean normalized data.
     """
     return (x - np.mean(x)) / (np.max(x) - np.min(x))
 
@@ -20,10 +20,10 @@ def cms(x):
     Mean Substraction: Centering
 
     Args:
-        x (array) : input data.
+        x (numpy.ndarray) : input data.
 
     Returns:
-        array with the centered data.
+        numpy.ndarray : array with the centered data.
     """
     return x - np.mean(x, axis=0)
 
@@ -33,10 +33,10 @@ def cvn(x):
     Variance Normalisation: Standardization
 
     Args:
-        x (array) : input data.
+        x (numpy.ndarray) : input data.
 
     Returns:
-        array with the variance normalized data.
+        numpy.ndarray : array with the variance normalized data.
     """
     return x / np.std(x)
 
@@ -46,10 +46,10 @@ def cmvn(x):
     Mean Variance Normalisation
 
     Args:
-        x (array) : input data.
+        x (numpy.ndarray) : input data.
 
     Returns:
-        array with the mean and variance normalized data.
+        numpy.ndarray : array with the mean and variance normalized data.
     """
     return cvn(cms(x))
 
@@ -69,7 +69,7 @@ def _helper_idx(i, start, stop, step, dct_type):
                          Default is 2.
 
     Returns:
-        array containing the cosine values.
+        numpy.ndarray : array containing the cosine values.
     """
     r = np.arange(start, stop, step)
 
@@ -96,7 +96,7 @@ def _helper_mat(K, ncep, start, stop, step, dct_type):
                          Default is 2.
 
     Returns:
-        2d-array containing the dct coefficients.
+        numpy.ndarray : 2d-array containing the dct coefficients.
     """
     mat = [
         K *
@@ -111,15 +111,15 @@ def cep2spec(cep, ncep, nfreq, dct_type=2):
     Reverse the cepstrum to recover a spectrum.
 
     Args:
-        cep    (array) : cepstral data to convert to spectral data.
+        cep    (numpy.ndarray) : cepstral data to convert to spectral data.
         ncep     (int) : number of cepstrals.
         nfreq    (int) : number of points to reconstruct in spectrum.
         dct_type (int) : the discrete cosine transform type.
                          Default is 2.
 
     Returns
-         2d-array spec, spectrum matrix
-         2d-array idctm, the IDCT matrix that spec was multiplied by to give cep.
+         numpy.ndarray : 2d-array spec, spectrum matrix
+         numpy.ndarray : 2d-array idctm, the IDCT matrix that spec was multiplied by to give cep.
     """
     _, ncol = cep.shape
 
@@ -170,12 +170,12 @@ def deltas(x, w=9):
     calculation performed in feacalc etc. Each row of X is filtered separately.
 
     Args:
-        x (array) : input sequence
+        x (numpy.ndarray) : input sequence
         w   (int) : window size to use in the derivatives calculation.
                     Default is 9.
 
     Returns:
-        2d-arrays containing the derivatives values.
+        numpy.ndarray : 2d-array containing the derivatives values.
     """
     _, cols = x.shape
     hlen = np.floor(w / 2)
@@ -194,15 +194,15 @@ def spec2cep(spec, ncep=9, dct_type=2):
     Calculate cepstra from spectral samples (in columns of spec).
 
     Args:
-        spec   (array) : spectral data to convert to cepstral.
+        spec   (numpy.ndarray) : spectral data to convert to cepstral.
         ncep     (int) : number of cepstrals.
                          Default is 9.
         dct_type (int) : the discrete cosine transform type.
                          Default is 2.
 
     Returns
-         2d-array ncep, cepstral rows
-         2d-array dctm, the DCT matrix that spec was multiplied by to give cep.
+         numpy.ndarray : 2d-array ncep, cepstral rows
+         numpy.ndarray : 2d-array dctm, the DCT matrix that spec was multiplied by to give cep.
     """
     nrow, _ = spec.shape[0], spec.shape[1]
     dctm = np.zeros((ncep, nrow))
@@ -253,11 +253,11 @@ def lifter_ceps(cepstra, L=22):
     increasing the magnitude of the high frequency DCT coeffs.
 
     Args:
-        cepstra (np.array) : the matrix of mel-cepstra, will be numframes * numcep in size.
-        L            (int) : the liftering coefficient to use. Default is 22. L <= 0 disables lifter.
+        cepstra (numpy.ndarray) : the matrix of mel-cepstra, will be numframes * numcep in size.
+        L                 (int) : the liftering coefficient to use. Default is 22. L <= 0 disables lifter.
 
     Returns:
-        liftered cepstra.
+        numpy.ndarray : liftered cepstra.
     """
     if L > 0:
         _, ncoeff = np.shape(cepstra)

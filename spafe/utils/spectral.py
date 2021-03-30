@@ -18,17 +18,17 @@ def cqt(sig, fs=16000, low_freq=10, high_freq=3000, b=48):
           - return the first <num_ceps> components
 
     Args:
-        sig     (array) : a mono audio signal (Nx1) from which to compute features.
-        fs        (int) : the sampling frequency of the signal we are working with.
-                          Default is 16000.
-        low_freq  (int) : lowest band edge of mel filters (Hz).
-                          Default is 10.
-        high_freq (int) : highest band edge of mel filters (Hz).
-                          Default is 3000.
-        b         (int) : number of bins per octave.
-                          Default is 48.
+        sig (numpy.ndarray) : a mono audio signal (Nx1) from which to compute features.
+        fs            (int) : the sampling frequency of the signal we are working with.
+                              Default is 16000.
+        low_freq      (int) : lowest band edge of mel filters (Hz).
+                              Default is 10.
+        high_freq     (int) : highest band edge of mel filters (Hz).
+                              Default is 3000.
+        b             (int) : number of bins per octave.
+                              Default is 48.
     Returns:
-        array including the Q-transform coefficients.
+        numpy.ndarray : array including the Q-transform coefficients.
     """
 
     # define lambda funcs for clarity
@@ -65,6 +65,15 @@ def cqt(sig, fs=16000, low_freq=10, high_freq=3000, b=48):
 def pre_process_x(sig, fs=16000, win_type="hann", win_len=0.025, win_hop=0.01):
     """
     Prepare window and pad signal audio
+
+    Args:
+        sig (numpy.ndarray) : audio signal in the time domain
+        fs            (int) : the sampling frequency of the signal we are working with.
+                              Default is 16000.
+        win_type   (string) : type of windowing to use.
+        win_len       (int) : window lenght to be used for the STFT
+        win_hop       (int) : hop-size
+
     """
     # convert integer to double
     # sig = np.double(sig) / 2.**15
@@ -95,12 +104,15 @@ def stft(sig, fs=16000, win_type="hann", win_len=0.025, win_hop=0.01):
     Compute the short time Fourrier transform of an audio signal x.
 
     Args:
-        x   (array) : audio signal in the time domain
-        win   (int) : window to be used for the STFT
-        hop   (int) : hop-size
+        sig (numpy.ndarray) : audio signal in the time domain
+        fs            (int) : the sampling frequency of the signal we are working with.
+                              Default is 16000.
+        win_type   (string) : type of windowing to use.
+        win_len       (int) : window lenght to be used for the STFT
+        win_hop       (int) : hop-size
 
     Returns:
-        X : 2d array of the STFT coefficients of x
+        numpy.ndarray : 2d array of the STFT coefficients of x
     """
     sig, normalized_window, hop_length = pre_process_x(sig,
                                                        fs=fs,
@@ -117,12 +129,12 @@ def compute_stft(x, win, hop):
     Compute the short time Fourrier transform of an audio signal x.
 
     Args:
-        x   (array) : audio signal in the time domain
+        x   (numpy.ndarray) : audio signal in the time domain
         win   (int) : window to be used for the STFT
         hop   (int) : hop-size
 
     Returns:
-        X : 2d array of the STFT coefficients of x
+        numpy.ndarray : 2d array of the STFT coefficients of x
     """
     # length of the audio signal
     sig_len = x.size
@@ -152,12 +164,13 @@ def compute_stft(x, win, hop):
 def istft(X, fs=16000, win_type="hann", win_len=0.025, win_hop=0.01):
     """
     Args:
-        X : STFT coefficients
-        win : window to be used for the STFT
-        hop : hop-size
+        X  (numpy.ndarray) : STFT coefficients
+
+        win (float) : window to be used for the STFT
+        hop (float) : hop-size
 
     Returns :
-        x : inverse STFT of X
+        numpy.ndarray : inverse STFT of X
     """
     # STFT parameters
     # convert win_len and win_hop from seconds to samples
@@ -230,7 +243,7 @@ def display_stft(X,
     Plot the stft of an audio signal in the time-frequency plane.
 
     Args:
-        X        (array) : STFT coefficients
+        X        (numpy.ndarray) : STFT coefficients
         fs         (int) : sampling frequency in Hz (assumed to be integer)
         hop        (int) : hop-size used in the STFT (for labeling the time axis)
         low_freq   (int) : minimun frequency to plot in hz.
@@ -268,7 +281,7 @@ def display_stft(X,
     plt.ylabel('Frequency (Khz)')
     plt.xlabel('Time (sec)')
     plt.show()
-    
+
 
 def power_spectrum(fourrier_transform, nfft=NFFT):
     magnitude_frames = np.absolute(fourrier_transform)  # Magnitude of the FFT
@@ -381,7 +394,7 @@ def audspec(p_spectrum,
     perform critical band analysis (see PLP) based on the power spectrogram.
 
     Args:
-        aspectrum (array) : the power spectrum array.
+        aspectrum (numpy.ndarray) : the power spectrum array.
         nfft        (int) : the FFT size.
                             (Default is 512)
         fs          (int) : sample rate/ sampling frequency of the signal.
@@ -599,7 +612,7 @@ def invaudspec(aspectrum,
     Invert (~might not be that accurate) the effects of audspec()
 
     Args:
-        aspectrum (array) : the auditory spectrum array.
+        aspectrum (numpy.ndarray) : the auditory spectrum array.
         nfft        (int) : the FFT size.
                             (Default is 512)
         fs          (int) : sample rate/ sampling frequency of the signal.

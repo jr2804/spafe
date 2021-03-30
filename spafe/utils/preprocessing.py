@@ -10,10 +10,10 @@ def zero_handling(x):
     for any log function.
 
     Args:
-        x (array): input vector.
+        x (numpy.ndarray): input vector.
 
     Returns:
-        vector with zeros substituted with epsilon values.
+        numpy.ndarray : vector with zeros substituted with epsilon values.
     """
     return np.where(x == 0, np.finfo(float).eps, x)
 
@@ -23,11 +23,11 @@ def pre_emphasis(sig, pre_emph_coeff=0.97):
     perform preemphasis on the input signal.
 
     Args:
-        sig   (array) : signal to filter.
-        coeff (float) : preemphasis coefficient. 0 is no filter, default is 0.95.
+        sig   (numpy.ndarray) : signal to filter.
+        coeff         (float) : preemphasis coefficient. 0 is no filter, default is 0.95.
 
     Returns:
-        the filtered signal.
+        numpy.ndarray : the filtered signal.
     """
     return np.append(sig[0], sig[1:] - pre_emph_coeff * sig[:-1])
 
@@ -37,12 +37,12 @@ def stride_trick(a, stride_length, stride_step):
     apply framing using the stride trick from numpy.
 
     Args:
-        a (array) : signal array.
+        a   (numpy.ndarray) : signal array.
         stride_length (int) : length of the stride.
-        stride_step (int) : stride step.
+        stride_step   (int) : stride step.
 
     Returns:
-        blocked/framed array.
+        numpy.ndarray : blocked/framed array.
     """
     print(len(a), stride_length, stride_step)
     nrows = ((a.size - stride_length) // stride_step) + 1
@@ -57,17 +57,17 @@ def framing(sig, fs=16000, win_len=0.025, win_hop=0.01):
     transform a signal into a series of overlapping frames (=Frame blocking).
 
     Args:
-        sig     (array) : a mono audio signal (Nx1) from which to compute features.
-        fs        (int) : the sampling frequency of the signal we are working with.
-                          Default is 16000.
-        win_len (float) : window length in sec.
-                          Default is 0.025.
-        win_hop (float) : step between successive windows in sec.
-                          Default is 0.01.
+        sig  (numpy.ndarray) : a mono audio signal (Nx1) from which to compute features.
+        fs             (int) : the sampling frequency of the signal we are working with.
+                               Default is 16000.
+        win_len      (float) : window length in sec.
+                               Default is 0.025.
+        win_hop      (float) : step between successive windows in sec.
+                               Default is 0.01.
 
     Returns:
-        array of frames.
-        frame length.
+        numpy.ndarray : array of frames.
+        int : frame length.
 
     Notes:
     ------
@@ -100,13 +100,13 @@ def windowing(frames, frame_len, win_type="hamming", beta=14):
     generate and apply a window function to avoid spectral leakage.
 
     Args:
-        frames  (array) : array including the overlapping frames.
-        frame_len (int) : frame length.
-        win_type  (str) : type of window to use.
-                          Default is "hamming"
+        frames  (numpy.ndarray) : array including the overlapping frames.
+        frame_len         (int) : frame length.
+        win_type          (str) : type of window to use.
+                                  Default is "hamming"
 
     Returns:
-        windowed frames.
+        numpy.ndarray : windowed frames.
     """
     if   win_type == "hamming" : windows = np.hamming(frame_len)
     elif win_type == "hanning" : windows = np.hanning(frame_len)
@@ -122,13 +122,13 @@ def remove_silence(sig, fs, win_len=0.25, win_hop=0.25, threshold=-35):
     generate and apply a window function to avoid spectral leakage.
 
     Args:
-        frames  (array) : array including the overlapping frames.
-        frame_len (int) : frame length.
-        win_type  (str) : type of window to use.
-                          Default is "hamming"
+        frames  (numpy.ndarray) : array including the overlapping frames.
+        frame_len         (int) : frame length.
+        win_type          (str) : type of window to use.
+                                  Default is "hamming"
 
     Returns:
-        windowed frames.
+        numpy.ndarray : windowed frames.
     """
     # framing
     frames, frames_len = framing(sig=sig, fs=fs, win_len=win_len, win_hop=win_hop)
