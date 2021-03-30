@@ -1,6 +1,14 @@
-#############################################################################################
-#                           Mel-filter-banks implementation
-#############################################################################################
+################################################################################
+# __description__ = "Mel-filter-banks implementation"
+# __author__      = "Ayoub Malek"
+# __date__        = "26.02.2021 (last edit)"
+# __copyright__   = "Copyright 2019-2021, Ayoub Malek"
+# __license__     = "BSD 3-Clause License"
+# __version__     = "1.0.3"
+# __maintainer__  = "Ayoub Malek"
+# __email__       = "super@spot.colorado.edu"
+################################################################################
+
 import sys
 import numpy as np
 from ..utils.converters import hz2mel, mel2hz
@@ -35,11 +43,11 @@ def mel_filter_banks(nfilts=20,
                           (Default 0 Hz)
         high_freq (int) : highest band edge of mel filters.
                           (Default samplerate/2)
-        scale    (str)  : choose if mx bins amplitudes sum up to one or are constants.
+        scale     (str) : choose if mx bins amplitudes sum up to one or are constants.
                           Default is "constant"
 
     Returns:
-        a numpy array of size nfilts * (nfft/2 + 1) containing filterbank.
+        numpy.ndarray : array of size nfilts * (nfft/2 + 1) containing filterbank.
         Each row holds 1 filter.
     """
     # init freqs
@@ -122,7 +130,7 @@ def inverse_mel_filter_banks(nfilts=20,
                           Default is "const"
 
     Returns:
-        a numpy array of size nfilt * (nfft/2 + 1) containing filterbank.
+        numpy.ndarray : array of size nfilt * (nfft/2 + 1) containing filterbank.
         Each row holds 1 filter.
     """
     # init freqs

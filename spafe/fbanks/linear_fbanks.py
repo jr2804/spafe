@@ -36,7 +36,7 @@ def linear_filter_banks(nfilts=20,
                           Default is "constant"
 
     Returns:
-        (numpy array) array of size nfilts * (nfft/2 + 1) containing filterbank.
+        numpy.ndarray :  array of size nfilts * (nfft/2 + 1) containing filterbank.
         Each row holds 1 filter.
     """
     # init freqs

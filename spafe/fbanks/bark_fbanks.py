@@ -58,7 +58,7 @@ def bark_filter_banks(nfilts=20,
         scale    (str)  : choose if max bins amplitudes ascend, descend or are constant (=1).
                           Default is "constant"
     Returns:
-        a numpy array of size nfilts * (nfft/2 + 1) containing filterbank.
+        numpy.ndarray :  array of size nfilts * (nfft/2 + 1) containing filterbank.
         Each row holds 1 filter.
     """
     # init freqs

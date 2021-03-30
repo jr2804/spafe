@@ -28,7 +28,7 @@ def generate_center_frequencies(min_freq, max_freq, nfilts):
         nfilts   (int) : number of filters, that is equivalent to the number of
                         center frequencies to compute.
     Returns:
-        an array of center frequencies.
+        numpy.ndarray : array of center frequencies.
     """
     # init vars
     m = np.array(range(nfilts)) + 2
@@ -45,15 +45,15 @@ def compute_gain(fcs, B, wT, T):
     Compute Gaina and matrixify computation for speed purposes.
 
     Args:
-        fcs (array) : center frequencies in
-        B   (array) : bandwidths of the filters.
-        wT  (array) : corresponds to `(omega) * T = 2 * pi * freq * T` used for
-                      the frequency domain computations.
-        T   (float) : periode in seconds aka inverse of the sampling rate.
+        fcs (numpy.ndarray) : center frequencies in
+        B   (numpy.ndarray) : bandwidths of the filters.
+        wT  (numpy.ndarray) : corresponds to `(omega) * T = 2 * pi * freq * T`
+                              used for the frequency domain computations.
+        T           (float) : periode in seconds aka inverse of the sampling rate.
 
     Returns:
-        a 2d numpy array representing the filter gains.
-        a 2d array A used for final computations.
+        numpy.ndarray : a 2d numpy array representing the filter gains.
+        numpy.ndarray : a 2d array A used for final computations.
     """
     if USECYTHON:
         # pre-computations for simplification
@@ -114,7 +114,7 @@ def gammatone_filter_banks(nfilts=20,
                           Default is 4.
 
     Returns:
-        a numpy array of size nfilts * (nfft/2 + 1) containing filterbank.
+        numpy.ndarray : array of size nfilts * (nfft/2 + 1) containing filterbank.
         Each row holds 1 filter.
     """
     # init freqs
