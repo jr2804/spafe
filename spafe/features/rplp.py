@@ -19,7 +19,7 @@ def plp(sig,
     compute plps.
 
     Args:
-        sig            (array) : a mono audio signal (Nx1) from which to compute features.
+        sig    (numpy.ndarray) : a mono audio signal (Nx1) from which to compute features.
         fs               (int) : the sampling frequency of the signal we are working with.
                                  Default is 16000.
         num_ceps       (float) : number of cepstra to return.
@@ -39,7 +39,7 @@ def plp(sig,
         normalize        (int) : if True apply normalization.
                                  Default is 0.
     Returns:
-        plps.
+        numpy.ndarray : plps array.
     """
     # pre-emphasis
     if pre_emph:
@@ -66,7 +66,7 @@ def rplp(sig,
     compute rasta plps.
 
     Args:
-        sig            (array) : a mono audio signal (Nx1) from which to compute features.
+        sig    (numpy.ndarray) : a mono audio signal (Nx1) from which to compute features.
         fs               (int) : the sampling frequency of the signal we are working with.
                                  Default is 16000.
         num_ceps       (float) : number of cepstra to return.
@@ -82,7 +82,7 @@ def rplp(sig,
         normalize        (int) : if True apply normalization.
                                  Default is 0.
     Returns:
-        rasta plps.
+        numpy.ndarray rasta plps.
     """
     # pre-emphasis
     if pre_emph:
@@ -109,21 +109,21 @@ def rastaplp(x,
     [cepstra, spectra, lpcas] = rastaplp(samples, sr, do_rasta, modelorder)
 
     Args:
-        x        (array) : signal array.
-        fs         (int) : sampling rate.
-                           Default is 1600.
-        win_len  (float) : length of window.
-                           Default is 0.025,
-        win_hop  (float) : window hop.
-                           Default is 0.010,
-        do_rasta  (bool) : if True apply rasta filtering. If False PLP is calculated.
+        x (numpy.ndarray) : signal array.
+        fs          (int) : sampling rate.
+                            Default is 1600.
+        win_len   (float) : length of window.
+                            Default is 0.025,
+        win_hop   (float) : window hop.
+                            Default is 0.010,
+        do_rasta   (bool) : if True apply rasta filtering. If False PLP is calculated.
                            Default is True,
-        modelorder (int) : order of the model / number of cepstra. 0 -> no PLP.
-                           Default is 13,
-        normalize (int) : if True apply normalization.
-                           Default is 0
+        modelorder  (int) : order of the model / number of cepstra. 0 -> no PLP.
+                            Default is 13,
+        normalize   (int) : if True apply normalization.
+                            Default is 0
     Returns:
-        PLP or RPLP coefficients. Matrix of features, row = feature, col = frame.
+        numpy.ndarray : PLP or RPLP coefficients. Matrix of features, row = feature, col = frame.
     """
     # first compute power spectrum
     p_spectrum, _ = spec.powspec(x, fs, win_len, win_hop)

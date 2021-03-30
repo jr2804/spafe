@@ -46,10 +46,10 @@ def compute_fund_freqs(sig, fs):
 
     Args:
         centroid (float) : spectral centroid.
-        spectrum (array) : spectrum array.
+        spectrum (numpy.ndarray) : spectrum array.
 
     Returns:
-        (float) spectral spread.
+        float : spectral spread.
     """
     # fundamental frequencies calculations
     fund_freqs_extractor = FundamentalFrequenciesExtractor(debug=False)
@@ -71,11 +71,11 @@ def compute_dom_freqs_and_mod_index(sig,
     compute dominant frequencies and modulation index.
 
     Args:
-        sig (array) : spectral centroid.
+        sig (numpy.ndarray) : spectral centroid.
         fs (int) : spectrum array.
 
     Returns:
-        (float) spectral spread.
+        float spectral spread.
     """
     # dominant frequencies calculations
     dom_freqs = get_dominant_frequencies(sig=sig,
@@ -167,10 +167,10 @@ def spectral_spread(centroid, spectrum, fs):
 
     Args:
         centroid (float) : spectral centroid.
-        spectrum (array) : spectrum array.
+        spectrum (numpy.ndarray) : spectrum array.
 
     Returns:
-        (float) spectral spread.
+        float : spectral spread.
     """
     bin_count, numerator, denominator = 0, 0, 0
 
@@ -232,10 +232,10 @@ def extract_feats(sig, fs, nfft=512):
 
     Args:
         centroid (float) : spectral centroid.
-        spectrum (array) : spectrum array.
+        spectrum (numpy.ndarray) : spectrum array.
 
     Returns:
-        (float) spectral spread.
+        float : spectral spread.
     """
     # init features dictionary
     feats = {}

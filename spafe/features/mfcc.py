@@ -37,7 +37,7 @@ def mfcc(sig,
           - return the first <num_ceps> components
 
     Args:
-        sig            (array) : a mono audio signal (Nx1) from which to compute features.
+        sig    (numpy.ndarray) : a mono audio signal (Nx1) from which to compute features.
         fs               (int) : the sampling frequency of the signal we are working with.
                                  Default is 16000.
         num_ceps       (float) : number of cepstra to return.
@@ -72,7 +72,7 @@ def mfcc(sig,
                                  Default is 0.
 
     Returns:
-        (array) : features - the MFFC features: num_frames x num_ceps
+        numpy.ndarray : features - the MFFC features: num_frames x num_ceps
     """
     # init freqs
     high_freq = high_freq or fs / 2
@@ -169,7 +169,7 @@ def imfcc(sig,
     Compute Inverse MFCC features from an audio signal.
 
     Args:
-        sig            (array) : a mono audio signal (Nx1) from which to compute features.
+        sig    (numpy.ndarray) : a mono audio signal (Nx1) from which to compute features.
         fs               (int) : the sampling frequency of the signal we are working with.
                                  Default is 16000.
         num_ceps       (float) : number of cepstra to return.
@@ -204,7 +204,7 @@ def imfcc(sig,
                                  Default is 0.
 
     Returns:
-        (array) : features - the MFFC features: num_frames x num_ceps
+        numpy.ndarray : features - the MFFC features: num_frames x num_ceps
     """
     # init freqs
     high_freq = high_freq or fs / 2

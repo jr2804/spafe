@@ -33,7 +33,7 @@ def psrcc(sig,
     audio signal.
 
     Args:
-        sig            (array) : a mono audio signal (Nx1) from which to compute features.
+        sig    (numpy.ndarray) : a mono audio signal (Nx1) from which to compute features.
         fs               (int) : the sampling frequency of the signal we are working with.
                                  Default is 16000.
         num_ceps       (float) : number of cepstra to return.
@@ -70,7 +70,7 @@ def psrcc(sig,
                                  Default is 0.
 
     Returns:
-        (array) : 2d array of PSRCC features (num_frames x num_ceps)
+        numpy.ndarray : 2d array of PSRCC features (num_frames x num_ceps)
     """
     # init freqs
     high_freq = high_freq or fs / 2

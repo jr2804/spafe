@@ -23,7 +23,7 @@ def lpcc(sig,
     Compute the LINEAR PREDICTIVE CEPSTRAL COEFFICIENTS (LPCC) from an audio signal.
 
     Args:
-        sig            (array) : a mono audio signal (Nx1) from which to compute features.
+        sig    (numpy.ndarray) : a mono audio signal (Nx1) from which to compute features.
         fs               (int) : the sampling frequency of the signal we are working with.
                                  Default is 16000.
         num_ceps       (float) : number of cepstra to return (order of the model to compute).
@@ -47,7 +47,7 @@ def lpcc(sig,
         dither           (int) : 1 = add offset to spectrum as if dither noise.
                                  Default is 0.
     Returns:
-        (array) : 2d array of LPCC features (num_frames x num_ceps)
+        numpy.ndarray : 2d array of LPCC features (num_frames x num_ceps)
     """
     lpcs = lpc(sig=sig,
                fs=fs,
@@ -86,7 +86,7 @@ def lpc(sig,
     Compute the LINEAR PREDICTIVE COEFFICIENTS (LPC) from an audio signal.
 
     Args:
-        sig            (array) : a mono audio signal (Nx1) from which to compute features.
+        sig    (numpy.ndarray) : a mono audio signal (Nx1) from which to compute features.
         fs               (int) : the sampling frequency of the signal we are working with.
                                  Default is 16000.
         num_ceps       (int) : number of cepstra to return(order of the model to compute).
@@ -110,7 +110,7 @@ def lpc(sig,
         dither           (int) : 1 = add offset to spectrum as if dither noise.
                                  Default is 0.
     Returns:
-        (array) : 2d array of LPC features (num_frames x num_ceps)
+        numpy.ndarray : 2d array of LPC features (num_frames x num_ceps)
     """
     # pre-emphasis
     if pre_emph:
@@ -148,11 +148,11 @@ def do_lpc(x, model_order=8):
     Compute the autoregressive model from spectral magnitude samples.
 
     Args:
-        x         (array) : array of the audio signal to process.
+        x (numpy.ndarray) : array of the audio signal to process.
         model_order (int) : order of the model to compute.
 
     Returns:
-        array of the autoregressive model
+        numpy.ndarray : array of the autoregressive model
     """
     nbands, nframes = x.shape
     ncorr = 2 * (nbands - 1)
@@ -193,11 +193,11 @@ def lpc2cep(a, nout=0):
      - convert the LPC 'a' coefficients in each column of lpcs into frames of cepstra.
 
     Args:
-        a  (array) : cepstral values.
-        nout (int) : number of cepstra to produce
+        a (numpy.ndarray) : cepstral values.
+        nout        (int) : number of cepstra to produce
 
     Returns:
-        array of LPC coefficients.
+        numpy.ndarray : array of LPC coefficients.
         Default size(lpcs, 1)
     """
     nin, ncol = a.shape
@@ -235,7 +235,7 @@ def lpc2spec(lpcs, nout=17, FMout=False):
         FMout (bool) :
 
     Returns:
-        list including the features, F and M
+        list : list including the features, F and M
     """
     rows, cols = lpcs.shape
     order = rows - 1

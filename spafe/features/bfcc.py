@@ -14,10 +14,10 @@ def intensity_power_law(w):
     Apply the intensity power law.
 
     Args:
-        w (array) : signal information.
+        w (numpy.ndarray) : signal information.
 
-    Resturn:
-        array after intensity power law.
+    Returns:
+        numpy.ndarray : array after intensity power law.
     """
     def f(w, c, p):
         return w**2 + c * 10**p
@@ -48,7 +48,7 @@ def bfcc(sig,
     Compute the bark-frequency cepstral coefﬁcients (BFCC features) from an audio signal.
 
     Args:
-        sig            (array) : a mono audio signal (Nx1) from which to compute features.
+        sig    (numpy.ndarray) : a mono audio signal (Nx1) from which to compute features.
         fs               (int) : the sampling frequency of the signal we are working with.
                                  Default is 16000.
         num_ceps       (float) : number of cepstra to return.
@@ -83,7 +83,7 @@ def bfcc(sig,
                                  Default is 0.
 
     Returns:
-        (array) : 2d array of BFCC features (num_frames x num_ceps)
+        numpy.ndarray : 2d array of BFCC features (num_frames x num_ceps)
     """
     # init freqs
     high_freq = high_freq or fs / 2
