@@ -33,9 +33,5 @@ jobs:
       run: |
         pytest -q -x --cov=./spafe
     - name: Upload coverage statistics
-      env:
-        GITHUB_TOKEN: $ secrets.GITHUB_TOKEN
       run: |
         codecov
-        coveralls
-        coverage xml
